@@ -1,0 +1,16 @@
+0.7
+2020.2
+Nov  8 2024
+22:36:57
+I:/RISC-V/RISC_V/RISC_V.sim/sim_1/behav/xsim/glbl.v,1724786425,verilog,,,,glbl,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sim_1/new/tb_lsu.v,1762843193,verilog,,,,tb_lsu,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sim_1/new/tb_mem.v,1762844035,verilog,,,,tb_mem,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sim_1/new/tb_riscv_top.v,1762846317,verilog,,,,tb_riscv_top,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/ImmGen.v,1762446724,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/alu.v,,ImmGen,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/alu.v,1762387221,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/brc.v,,alu,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/brc.v,1762798050,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/controller.v,,brc,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/controller.v,1762857568,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/lsu.v,,controller,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/lsu.v,1762856985,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/mem.v,,lsu,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/mem.v,1762854055,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/regfile.v,,mem,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/regfile.v,1762854435,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/riscv_top.v,,regfile,,,,,,,,
+I:/RISC-V/RISC_V/RISC_V.srcs/sources_1/new/riscv_top.v,1762858228,verilog,,I:/RISC-V/RISC_V/RISC_V.srcs/sim_1/new/tb_riscv_top.v,,riscv_top,,,,,,,,
