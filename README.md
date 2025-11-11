@@ -28,7 +28,9 @@ The processor executes **an entire instruction in one clock cycle**, covering al
 2. **ID** – Decode + Register File read  
 3. **EX** – ALU performs arithmetic/logic  
 4. **MEM** – Load/store via **Load-Store Unit (LSU)**  
-5. **WB** – Write result back to registers  
+5. **WB** – Write result back to registers
+   <img width="1388" height="663" alt="image" src="https://github.com/user-attachments/assets/58c6bacd-eaad-44f1-aee2-7c00306eb926" />
+
 
 ### ✅ Advantages
 | Feature | Description |
@@ -53,6 +55,8 @@ The processor executes **an entire instruction in one clock cycle**, covering al
 The **LSU** handles both:
 - **data memory access** (internal RAM), and
 - **I/O register access** (MMIO)
+- <img width="800" height="368" alt="image" src="https://github.com/user-attachments/assets/9493cce0-df52-4632-b4c9-670b04923bd6" />
+
 
 Peripherals are assigned fixed **base addresses**, allowing the CPU to control them using normal `LW`/`SW` instructions.
 
