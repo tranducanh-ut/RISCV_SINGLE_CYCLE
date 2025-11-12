@@ -124,31 +124,31 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ---
 
-###🧪 Tutorial: Run the Testbench in testAPP
+### 🧪 Tutorial: Run the Testbench in testAPP
 
 Run the RISC-V testbench tb_regtrace.v with Vivado XSim in batch mode and generate regtrace.txt next to your sources.
 
-#✅ Prerequisites
+# ✅ Prerequisites
 
 Vivado 2024.x (XSim)
 
 Your RTL & testbench files placed under testAPP/ as shown below
 
-#📂 Recommended Layout
+# 📂 Recommended Layout
 testAPP/
 
-├─ alu.v  
-├─ brc.v
-├─ controller.v
-├─ ImmGen.v
-├─ lsu.v
-├─ mem.v                 # uses $readmemh("mem.h", mem);
-├─ regfile.v
-├─ riscv_top.v
-├─ tb_regtrace.v         # writes ../regtrace.txt → ends up at testAPP/regtrace.txt
-├─ mem.h                 # your program in hex for $readmemh
-├─ run_sim.tcl           # TCL script (below)
-└─ sim_work/             # build folder (you create it)
+├─ alu.v    
+├─ brc.v  
+├─ controller.v   
+├─ ImmGen.v   
+├─ lsu.v  
+├─ mem.v                   # uses $readmemh("mem.h", mem);
+├─ regfile.v  
+├─ riscv_top.v  
+├─ tb_regtrace.v           # writes ../regtrace.txt → ends up at testAPP/regtrace.txt
+├─ mem.h                     # your program in hex for $readmemh
+├─ run_sim.tcl             # TCL script (below)
+└─ sim_work/               # build folder (you create it)
 
 
 #🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
