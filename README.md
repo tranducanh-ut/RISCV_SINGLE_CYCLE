@@ -134,7 +134,7 @@ Run the RISC-V testbench (`tb_regtrace.v`) with **Vivado XSim** in batch mode an
 - **Vivado 2024.x (XSim)** installed on Windows
 - Your RTL & TB files placed under `testAPP/` (see layout below)
 
-```text
+``text
 testAPP/
 ├─ alu.v
 ├─ brc.v
