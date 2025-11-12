@@ -124,19 +124,20 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ---
 
-🧪 Tutorial: Run the Testbench in testAPP
+###🧪 Tutorial: Run the Testbench in testAPP
 
 Run the RISC-V testbench tb_regtrace.v with Vivado XSim in batch mode and generate regtrace.txt next to your sources.
 
-✅ Prerequisites
+#✅ Prerequisites
 
 Vivado 2024.x (XSim)
 
 Your RTL & testbench files placed under testAPP/ as shown below
 
-📂 Recommended Layout
+#📂 Recommended Layout
 testAPP/
-├─ alu.v
+
+├─ alu.v  
 ├─ brc.v
 ├─ controller.v
 ├─ ImmGen.v
@@ -150,109 +151,27 @@ testAPP/
 └─ sim_work/             # build folder (you create it)
 
 
-🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
-
-initial begin
-  $readmemh("mem.h", mem);
-end
-
-🚀 Quick Start (Windows – CMD/PowerShell)
-
-Create a working directory:
-
-mkdir testAPP\sim_work
+#🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
 
 
-Save the script below as testAPP\run_sim.tcl.
+#🚀 Quick Start (Windows – CMD/PowerShell)
 
-Run from the build folder:
+First you should enter your file vivado.bin   
 
-cd testAPP\sim_work
-vivado -mode batch -source ..\run_sim.tcl
+Secondly you will enter the path of your hex file( noted that should convert to file.h)
 
+Finally, Open the output:
 
-Open the output:
+ To make it safe use may convert your hex file into file.h and copy the heximal number on it to file mem.h.
 
 Trace → testAPP\regtrace.txt
 
 XSim logs → testAPP\sim_work\xsim.dir and .Xil
 
-🧩 run_sim.tcl (clean, path-safe)
-# ================================================================
-# run_sim.tcl — Run XSim (Vivado) for RISC-V testbench
-# ================================================================
-# USAGE (Windows):
-#   1) Open CMD/PowerShell at: testAPP\sim_work
-#   2) vivado -mode batch -source ..\run_sim.tcl
-#
-# Output:
-#   - Testbench writes ../regtrace.txt  →  testAPP/regtrace.txt
-# ================================================================
+NOTE: To make it safe use may convert your hex file into file.h and copy the heximal number on it to file mem.h.
 
-# -------- 1) Locate source directory & top --------
-# Folder that contains this script (sim_work/..)
-set SCRIPT_DIR [file normalize [file dirname [info script]]]
 
-# Sources live one level above sim_work
-set SRC_DIR [file normalize [file join $SCRIPT_DIR ..]]
-
-# Testbench top module
-set TOP tb_regtrace
-
-# RTL/TB file list (adjust if needed)
-set FILES {
-  riscv_top.v
-  regfile.v
-  mem.v
-  alu.v
-  brc.v
-  controller.v
-  ImmGen.v
-  lsu.v
-  tb_regtrace.v
-}
-
-# -------- 2) Resolve absolute paths & check existence --------
-set ABS_FILES {}
-foreach f $FILES {
-  set absf [file normalize [file join $SRC_DIR $f]]
-  if {![file exists $absf]} {
-    puts "ERROR: File not found: $absf"
-    puts "       → Check SRC_DIR or the names in FILES."
-    exit 1
-  }
-  lappend ABS_FILES $absf
-}
-
-puts "===> SRC_DIR = $SRC_DIR"
-puts "===> TOP     = $TOP"
-puts "===> FILES:"
-foreach f $ABS_FILES { puts "     - $f" }
-
-# -------- 3) Clean previous artifacts --------
-file delete -force xsim.dir .Xil
-
-# -------- 4) Compile (xvlog) --------
-puts ">> xvlog ..."
-# --incr: incremental compile; --relax: relax some standard checks
-exec xvlog --incr --relax {*}$ABS_FILES
-
-# -------- 5) Elaborate (xelab) --------
-puts ">> xelab ..."
-set SNAP "${TOP}_sim"
-exec xelab $TOP -s $SNAP
-
-# -------- 6) Run (xsim) --------
-puts ">> xsim -R ..."
-exec xsim $SNAP -R
-puts "Simulation DONE."
-
-# -------- 7) Where is the trace? --------
-set EXPECT_LOG [file normalize [file join $SRC_DIR regtrace.txt]]
-puts "Trace expected at: $EXPECT_LOG"
-# ================================================================
-
-🧷 Tips & Troubleshooting
+#🧷 Tips & Troubleshooting
 
 mem.h is not loaded
 Double-check the filename/extension and that it’s in the same folder as mem.v. Text encoding (ASCII/UTF-8) and line endings are fine for $readmemh.
