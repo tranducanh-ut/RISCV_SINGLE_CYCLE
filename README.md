@@ -142,19 +142,19 @@ testAPP/
 ├─ controller.v   
 ├─ ImmGen.v   
 ├─ lsu.v  
-├─ mem.v                   # uses $readmemh("mem.h", mem);
+├─ mem.v                   
 ├─ regfile.v  
 ├─ riscv_top.v  
-├─ tb_regtrace.v           # writes ../regtrace.txt → ends up at testAPP/regtrace.txt
-├─ mem.h                     # your program in hex for $readmemh
-├─ run_sim.tcl             # TCL script (below)
-└─ sim_work/               # build folder (you create it)
+├─ tb_regtrace.v              
+├─ mem.h                     
+├─ run_sim.tcl               
+└─ sim_work/              
 
 
-#🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
+# 🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
 
 
-#🚀 Quick Start (Windows – CMD/PowerShell)
+# 🚀 Quick Start (Windows – CMD/PowerShell)
 
 First you should enter your file vivado.bin   
 
