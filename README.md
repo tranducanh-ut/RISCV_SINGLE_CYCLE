@@ -124,17 +124,17 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ---
 
-## 🧪 Tutorial: Run the Testbench in `testAPP`
+🧪 Tutorial: Run the Testbench in testAPP
 
-Run the RISC-V testbench (`tb_regtrace.v`) with **Vivado XSim** in batch mode and generate **`regtrace.txt`** (register update trace) next to your sources.
+Run the RISC-V testbench tb_regtrace.v with Vivado XSim in batch mode and generate regtrace.txt next to your sources.
 
----
+✅ Prerequisites
 
-### ✅ Prerequisites
-- **Vivado 2024.x (XSim)** installed on Windows
-- Your RTL & TB files placed under `testAPP/` (see layout below)
+Vivado 2024.x (XSim)
 
-``text
+Your RTL & testbench files placed under testAPP/ as shown below
+
+📂 Recommended Layout
 testAPP/
 ├─ alu.v
 ├─ brc.v
@@ -144,67 +144,62 @@ testAPP/
 ├─ mem.v                 # uses $readmemh("mem.h", mem);
 ├─ regfile.v
 ├─ riscv_top.v
-├─ tb_regtrace.v         # writes ../regtrace.txt (so output is testAPP/regtrace.txt)
-├─ mem.h                 # your program hex for $readmemh
+├─ tb_regtrace.v         # writes ../regtrace.txt → ends up at testAPP/regtrace.txt
+├─ mem.h                 # your program in hex for $readmemh
 ├─ run_sim.tcl           # TCL script (below)
-└─ sim_work/             # build folder created by you (recommended)
-Important: In mem.v, make sure you load hex from the same folder:
+└─ sim_work/             # build folder (you create it)
 
-verilog
-Copy code
+
+🔎 Important – mem.v: ensure $readmemh uses a local filename (same folder as mem.v & mem.h):
+
 initial begin
   $readmemh("mem.h", mem);
 end
-🚀 Quick Start
-Create the working directory:
 
-bat
-Copy code
+🚀 Quick Start (Windows – CMD/PowerShell)
+
+Create a working directory:
+
 mkdir testAPP\sim_work
-Place the TCL script below as testAPP\run_sim.tcl.
 
-Run from sim_work:
 
-bat
-Copy code
+Save the script below as testAPP\run_sim.tcl.
+
+Run from the build folder:
+
 cd testAPP\sim_work
 vivado -mode batch -source ..\run_sim.tcl
+
+
 Open the output:
 
-Trace file → testAPP\regtrace.txt
+Trace → testAPP\regtrace.txt
 
-🧩 run_sim.tcl (drop-in & ready)
-tcl
-Copy code
+XSim logs → testAPP\sim_work\xsim.dir and .Xil
+
+🧩 run_sim.tcl (clean, path-safe)
 # ================================================================
-# run_sim.tcl — Run XSim (Vivado) with inline instructions
+# run_sim.tcl — Run XSim (Vivado) for RISC-V testbench
 # ================================================================
 # USAGE (Windows):
-#   1) Open CMD in testAPP\sim_work  (or use Vivado Tcl Console)
-#   2) Run:  vivado -mode batch -source ..\run_sim.tcl
+#   1) Open CMD/PowerShell at: testAPP\sim_work
+#   2) vivado -mode batch -source ..\run_sim.tcl
 #
-# GOAL:
-#   - Point to the RTL/testbench directory (SRC_DIR)
-#   - List .v files to compile (FILES)
-#   - Compile (xvlog) → Elaborate (xelab) → Run (xsim)
-#   - Testbench writes ../regtrace.txt (so output is testAPP\regtrace.txt)
+# Output:
+#   - Testbench writes ../regtrace.txt  →  testAPP/regtrace.txt
 # ================================================================
 
-# -------- 1) CONFIGURE SOURCE DIRECTORY & TOP --------
-# Directory of this script (run_sim.tcl)
+# -------- 1) Locate source directory & top --------
+# Folder that contains this script (sim_work/..)
 set SCRIPT_DIR [file normalize [file dirname [info script]]]
 
 # Sources live one level above sim_work
-# If run_sim.tcl is in "testAPP/sim_work", SRC_DIR = "testAPP"
 set SRC_DIR [file normalize [file join $SCRIPT_DIR ..]]
-
-# Alternative (absolute path) — uncomment & edit if preferred:
-# set SRC_DIR "I:/testAPP"
 
 # Testbench top module
 set TOP tb_regtrace
 
-# RTL/TB file list (add/remove as needed)
+# RTL/TB file list (adjust if needed)
 set FILES {
   riscv_top.v
   regfile.v
@@ -217,13 +212,13 @@ set FILES {
   tb_regtrace.v
 }
 
-# -------- 2) RESOLVE ABSOLUTE PATHS & CHECK FILES --------
+# -------- 2) Resolve absolute paths & check existence --------
 set ABS_FILES {}
 foreach f $FILES {
   set absf [file normalize [file join $SRC_DIR $f]]
   if {![file exists $absf]} {
     puts "ERROR: File not found: $absf"
-    puts "Fix SRC_DIR or FILES list above."
+    puts "       → Check SRC_DIR or the names in FILES."
     exit 1
   }
   lappend ABS_FILES $absf
@@ -234,25 +229,69 @@ puts "===> TOP     = $TOP"
 puts "===> FILES:"
 foreach f $ABS_FILES { puts "     - $f" }
 
-# -------- 3) CLEAN PREVIOUS ARTIFACTS --------
+# -------- 3) Clean previous artifacts --------
 file delete -force xsim.dir .Xil
 
-# -------- 4) COMPILE (xvlog) --------
+# -------- 4) Compile (xvlog) --------
 puts ">> xvlog ..."
+# --incr: incremental compile; --relax: relax some standard checks
 exec xvlog --incr --relax {*}$ABS_FILES
 
-# -------- 5) ELABORATE (xelab) --------
+# -------- 5) Elaborate (xelab) --------
 puts ">> xelab ..."
 set SNAP "${TOP}_sim"
 exec xelab $TOP -s $SNAP
 
-# -------- 6) RUN (xsim) --------
+# -------- 6) Run (xsim) --------
 puts ">> xsim -R ..."
 exec xsim $SNAP -R
 puts "Simulation DONE."
 
-# -------- 7) WHERE IS THE LOG? --------
-# If TB opens '../regtrace.txt' from sim_work, it will be:
+# -------- 7) Where is the trace? --------
 set EXPECT_LOG [file normalize [file join $SRC_DIR regtrace.txt]]
-puts "Expected log file: $EXPECT_LOG"
+puts "Trace expected at: $EXPECT_LOG"
 # ================================================================
+
+🧷 Tips & Troubleshooting
+
+mem.h is not loaded
+Double-check the filename/extension and that it’s in the same folder as mem.v. Text encoding (ASCII/UTF-8) and line endings are fine for $readmemh.
+
+regtrace.txt not created
+Confirm tb_regtrace.v actually opens/writes ../regtrace.txt. When you run from testAPP/sim_work, .. points to testAPP/.
+
+Missing files error in TCL
+The script prints the resolved absolute file list. If it errors, fix the FILES list or folder layout.
+
+Absolute path (optional)
+If you prefer to pin an absolute path, uncomment and edit this line inside the script:
+
+# set SRC_DIR "D:/path/to/your/testAPP"
+
+🐧 Optional: Run on Linux
+mkdir -p testAPP/sim_work
+cd testAPP/sim_work
+vivado -mode batch -source ../run_sim.tcl
+
+
+Replace backslashes with forward slashes and make sure vivado is in your $PATH.
+
+🧰 (Optional) One-click helpers
+
+Windows – run.bat (drop in testAPP/):
+
+@echo off
+setlocal
+if not exist sim_work mkdir sim_work
+cd /d sim_work
+vivado -mode batch -source ..\run_sim.tcl
+endlocal
+
+
+Linux – run.sh (drop in testAPP/, then chmod +x run.sh):
+
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p sim_work
+cd sim_work
+vivado -mode batch -source ../run_sim.tcl
