@@ -124,4 +124,111 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ---
 
-## 📝 License
+## 🧪 Tutorial: Run the Testbench in `testAPP`
+
+This testbench logs **register updates** to `regtrace.txt` (per cycle). The TB writes to `../regtrace.txt`, so with the scripts below you’ll get **`testAPP/regtrace.txt`** after the run.
+
+### 📁 Minimal Folder Layout
+testAPP/
+├─ alu.v
+├─ brc.v
+├─ controller.v
+├─ ImmGen.v
+├─ lsu.v
+├─ mem.v # $readmemh("mem.h")
+├─ regfile.v
+├─ riscv_top.v
+├─ tb_regtrace.v # testbench (writes ../regtrace.txt)
+├─ mem.h # program hex for $readmemh
+├─ run_sim.tcl # Vivado batch script
+└─ run_trace.bat # one-click batch
+
+markdown
+Copy code
+
+> 🔗 In `mem.v`, ensure you load program hex from the same folder:
+> ```verilog
+> initial begin
+>   $readmemh("mem.h", mem);
+> end
+> ```
+
+### ▶️ One-Click (Recommended)
+
+1. Open **CMD** in `testAPP/`
+2. Run:
+   ```bat
+   run_trace.bat
+After the simulation, open:
+testAPP/regtrace.txt
+
+If Vivado isn’t at the default location, edit the path at the top of run_trace.bat:
+
+bat
+Copy code
+set VIVADO_BAT="C:\Xilinx\Vivado\2024.2\bin\vivado.bat"
+▶️ Manual Run (Vivado Tcl / CMD)
+tcl
+Copy code
+cd testAPP/sim_work
+vivado -mode batch -source ../run_sim.tcl
+Result file: ../regtrace.txt → testAPP/regtrace.txt.
+
+📜 run_sim.tcl (reference)
+tcl
+Copy code
+# run_sim.tcl — build & run XSim
+file delete -force xsim.dir .Xil
+
+puts ">> xvlog ..."
+exec xvlog --incr --relax  ../riscv_top.v  ../regfile.v  ../mem.v  ../alu.v  ../brc.v  ../controller.v  ../ImmGen.v  ../lsu.v  ../tb_regtrace.v
+
+puts ">> xelab ..."
+exec xelab tb_regtrace -s tb_regtrace_sim
+
+puts ">> xsim -R ..."
+exec xsim tb_regtrace_sim -R
+
+puts "Simulation DONE."
+📌 The script assumes the working directory is testAPP/sim_work.
+The TB opens "../regtrace.txt" so the log lands in testAPP/.
+
+🧯 Troubleshooting
+No regtrace.txt generated
+
+Make sure you ran from testAPP/sim_work/ (for the Tcl script), or used run_trace.bat.
+
+Increase MAX_CYCLES in tb_regtrace.v if your program is longer.
+
+Check write permissions.
+
+xxxxxxxx for INSTR (can’t fetch)
+
+Wrong $readmemh path or missing/invalid mem.h.
+
+PC index out of range vs. mem[] depth (i_addr[31:2] bounds).
+
+Instruction & register update appear off by one line
+
+If you’re using the “pipeline-delay TB” (Cách B), tune PIPE_DELAY (e.g., 4 for classic 5-stage).
+If still off by one, try ±1.
+
+Vivado cannot find .v sources
+
+run_sim.tcl references files with ../ (one level up from sim_work/). Keep the folder layout.
+
+✅ Current Status
+Core datapath + control: Working (subset RV32I as listed)
+
+LSU MMIO: Working for LEDs/HEX/LCD + Switch read
+
+IMEM/DataMem: Working via $readmemh
+
+🛠️ Roadmap
+Add LB/LH/LBU/LHU/SB/SH
+
+Basic exception / unaligned access handling
+
+Optional 2–5 stage pipeline (higher Fmax)
+
+Expose WB-trace ports from top for perfect commit logging in TB
