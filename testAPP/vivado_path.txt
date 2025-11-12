@@ -1,0 +1,2 @@
+F:\vivado\Vivado\2024.2\bin\vivado.bat
+I:\testAPP\mem.h

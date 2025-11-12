@@ -1,0 +1,19 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/riscv_top.v" into library work
+INFO: [VRFC 10-311] analyzing module riscv_top
+WARNING: [VRFC 10-3380] identifier 'pc_sel' is used before its declaration [I:/testAPP/riscv_top.v:52]
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/regfile.v" into library work
+INFO: [VRFC 10-311] analyzing module regfile
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/mem.v" into library work
+INFO: [VRFC 10-311] analyzing module mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/alu.v" into library work
+INFO: [VRFC 10-311] analyzing module alu
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/brc.v" into library work
+INFO: [VRFC 10-311] analyzing module brc
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/controller.v" into library work
+INFO: [VRFC 10-311] analyzing module controller
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/ImmGen.v" into library work
+INFO: [VRFC 10-311] analyzing module ImmGen
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/lsu.v" into library work
+INFO: [VRFC 10-311] analyzing module lsu
+INFO: [VRFC 10-2263] Analyzing Verilog file "I:/testAPP/tb_regtrace.v" into library work
+INFO: [VRFC 10-311] analyzing module tb_regtrace

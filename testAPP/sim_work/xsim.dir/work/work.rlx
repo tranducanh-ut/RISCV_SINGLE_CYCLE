@@ -1,0 +1,13 @@
+0.7
+2020.2
+Nov  8 2024
+22:36:57
+I:/testAPP/ImmGen.v,1762446724,verilog,,I:/testAPP/lsu.v,,ImmGen,,,,,,,,
+I:/testAPP/alu.v,1762387221,verilog,,I:/testAPP/brc.v,,alu,,,,,,,,
+I:/testAPP/brc.v,1762798050,verilog,,I:/testAPP/controller.v,,brc,,,,,,,,
+I:/testAPP/controller.v,1762857568,verilog,,I:/testAPP/ImmGen.v,,controller,,,,,,,,
+I:/testAPP/lsu.v,1762961772,verilog,,I:/testAPP/tb_regtrace.v,,lsu,,,,,,,,
+I:/testAPP/mem.v,1762911437,verilog,,I:/testAPP/alu.v,,mem,,,,,,,,
+I:/testAPP/regfile.v,1762854435,verilog,,I:/testAPP/mem.v,,regfile,,,,,,,,
+I:/testAPP/riscv_top.v,1762858228,verilog,,I:/testAPP/regfile.v,,riscv_top,,,,,,,,
+I:/testAPP/tb_regtrace.v,1762966091,verilog,,,,tb_regtrace,,,,,,,,

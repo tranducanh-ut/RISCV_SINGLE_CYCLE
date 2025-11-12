@@ -1,0 +1,1 @@
+"tb_regtrace" -s "tb_regtrace_sim" 

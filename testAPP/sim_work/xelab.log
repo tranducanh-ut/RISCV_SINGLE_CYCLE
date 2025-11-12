@@ -1,0 +1,26 @@
+Vivado Simulator v2024.2.0
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: F:\vivado\Vivado\2024.2\bin\unwrapped\win64.o\xelab.exe tb_regtrace -s tb_regtrace_sim 
+Multi-threading is on. Using 6 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+WARNING: [VRFC 10-3091] actual bit length 10 differs from formal bit length 32 for port 'i_io_sw' [I:/testAPP/tb_regtrace.v:43]
+WARNING: [VRFC 10-3091] actual bit length 10 differs from formal bit length 32 for port 'o_io_ledr' [I:/testAPP/tb_regtrace.v:44]
+WARNING: [VRFC 10-3091] actual bit length 8 differs from formal bit length 32 for port 'o_io_ledg' [I:/testAPP/tb_regtrace.v:45]
+WARNING: [VRFC 10-3091] actual bit length 8 differs from formal bit length 32 for port 'o_io_lcd' [I:/testAPP/tb_regtrace.v:48]
+WARNING: [VRFC 10-3645] port 'o_pc_debug' remains unconnected for this instance [I:/testAPP/tb_regtrace.v:40]
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module work.mem
+Compiling module work.ImmGen
+Compiling module work.regfile
+Compiling module work.brc
+Compiling module work.controller
+Compiling module work.alu
+Compiling module work.lsu
+Compiling module work.riscv_top
+Compiling module work.tb_regtrace
+Built simulation snapshot tb_regtrace_sim
