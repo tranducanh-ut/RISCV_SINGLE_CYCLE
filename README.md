@@ -126,109 +126,107 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ## 🧪 Tutorial: Run the Testbench in `testAPP`
 
-This testbench logs **register updates** to `regtrace.txt` (per cycle). The TB writes to `../regtrace.txt`, so with the scripts below you’ll get **`testAPP/regtrace.txt`** after the run.
+# ================================================================
+# run_sim.tcl — TCL to run XSim (Vivado) with inline instructions
+# ================================================================
+# USAGE (Windows):
+#   1) Open CMD in the folder that contains "sim_work\" (or use Vivado Tcl Console)
+#   2) Run:  vivado -mode batch -source run_sim.tcl
+#
+# GOAL:
+#   - Point to the RTL/testbench directory (SRC_DIR)
+#   - List the .v files you want to compile (FILES)
+#   - Compile (xvlog) → Elaborate (xelab) → Run (xsim)
+#   - Testbench writes its log to ../regtrace.txt (if TB opens "../regtrace.txt")
+#
+# QUICK CUSTOMIZATION:
+#   - Switch SRC_DIR to an ABSOLUTE path:  set SRC_DIR "I:/testAPP"
+#   - Add/remove .v files in FILES
+#   - Change TOP (testbench module name): set TOP tb_regtrace
+# ================================================================
 
-### 📁 Minimal Folder Layout
-testAPP/
-├─ alu.v
-├─ brc.v
-├─ controller.v
-├─ ImmGen.v
-├─ lsu.v
-├─ mem.v # $readmemh("mem.h")
-├─ regfile.v
-├─ riscv_top.v
-├─ tb_regtrace.v # testbench (writes ../regtrace.txt)
-├─ mem.h # program hex for $readmemh
-├─ run_sim.tcl # Vivado batch script
-└─ run_trace.bat # one-click batch
+# --------- 1) CONFIGURE SOURCE DIRECTORY & BUILD TARGET ---------
 
-markdown
-Copy code
+# Directory of this script (run_sim.tcl)
+set SCRIPT_DIR [file normalize [file dirname [info script]]]
 
-> 🔗 In `mem.v`, ensure you load program hex from the same folder:
-> ```verilog
-> initial begin
->   $readmemh("mem.h", mem);
-> end
-> ```
+# DEFAULT: source RTL lives one level above this script (../)
+# => If run_sim.tcl is in "testAPP/sim_work", then SRC_DIR = "testAPP"
+set SRC_DIR [file normalize [file join $SCRIPT_DIR ..]]
 
-### ▶️ One-Click (Recommended)
+# ALTERNATIVE: use an ABSOLUTE PATH (RECOMMENDED for clarity/stability)
+# set SRC_DIR "I:/testAPP"
 
-1. Open **CMD** in `testAPP/`
-2. Run:
-   ```bat
-   run_trace.bat
-After the simulation, open:
-testAPP/regtrace.txt
+# Testbench top module name
+set TOP tb_regtrace
 
-If Vivado isn’t at the default location, edit the path at the top of run_trace.bat:
+# List of .v files to compile (ADD/REMOVE HERE)
+set FILES {
+  riscv_top.v
+  regfile.v
+  mem.v
+  alu.v
+  brc.v
+  controller.v
+  ImmGen.v
+  lsu.v
+  tb_regtrace.v
+}
 
-bat
-Copy code
-set VIVADO_BAT="C:\Xilinx\Vivado\2024.2\bin\vivado.bat"
-▶️ Manual Run (Vivado Tcl / CMD)
-tcl
-Copy code
-cd testAPP/sim_work
-vivado -mode batch -source ../run_sim.tcl
-Result file: ../regtrace.txt → testAPP/regtrace.txt.
+# --------- 2) MAKE ABSOLUTE PATHS & VERIFY EXISTENCE ---------
 
-📜 run_sim.tcl (reference)
-tcl
-Copy code
-# run_sim.tcl — build & run XSim
+set ABS_FILES {}
+foreach f $FILES {
+  set absf [file normalize [file join $SRC_DIR $f]]
+  if {![file exists $absf]} {
+    puts "ERROR: File not found: $absf"
+    puts "Please verify SRC_DIR or filenames in FILES."
+    exit 1
+  }
+  lappend ABS_FILES $absf
+}
+
+puts "===> SRC_DIR = $SRC_DIR"
+puts "===> TOP     = $TOP"
+puts "===> FILES:"
+foreach f $ABS_FILES { puts "     - $f" }
+
+# --------- 3) CLEAN PREVIOUS RUN ARTIFACTS ---------
+
 file delete -force xsim.dir .Xil
 
+# --------- 4) COMPILE (xvlog) ---------
+
 puts ">> xvlog ..."
-exec xvlog --incr --relax  ../riscv_top.v  ../regfile.v  ../mem.v  ../alu.v  ../brc.v  ../controller.v  ../ImmGen.v  ../lsu.v  ../tb_regtrace.v
+# --incr: incremental compile; --relax: relax some constraints
+# Use {*}$ABS_FILES to splat the list into arguments
+exec xvlog --incr --relax {*}$ABS_FILES
+
+# --------- 5) ELABORATE (xelab) ---------
 
 puts ">> xelab ..."
-exec xelab tb_regtrace -s tb_regtrace_sim
+# Snapshot name is TOP + "_sim"
+set SNAP "${TOP}_sim"
+exec xelab $TOP -s $SNAP
+
+# --------- 6) RUN SIMULATION (xsim) ---------
 
 puts ">> xsim -R ..."
-exec xsim tb_regtrace_sim -R
+exec xsim $SNAP -R
 
 puts "Simulation DONE."
-📌 The script assumes the working directory is testAPP/sim_work.
-The TB opens "../regtrace.txt" so the log lands in testAPP/.
 
-🧯 Troubleshooting
-No regtrace.txt generated
+# --------- 7) NOTE ABOUT LOG LOCATION (IF NEEDED) ---------
+# If the testbench opens "../regtrace.txt" (from sim_work), the log will be here:
+set EXPECT_LOG [file normalize [file join $SRC_DIR regtrace.txt]]
+puts "If TB uses ../regtrace.txt, expected log file: $EXPECT_LOG"
 
-Make sure you ran from testAPP/sim_work/ (for the Tcl script), or used run_trace.bat.
-
-Increase MAX_CYCLES in tb_regtrace.v if your program is longer.
-
-Check write permissions.
-
-xxxxxxxx for INSTR (can’t fetch)
-
-Wrong $readmemh path or missing/invalid mem.h.
-
-PC index out of range vs. mem[] depth (i_addr[31:2] bounds).
-
-Instruction & register update appear off by one line
-
-If you’re using the “pipeline-delay TB” (Cách B), tune PIPE_DELAY (e.g., 4 for classic 5-stage).
-If still off by one, try ±1.
-
-Vivado cannot find .v sources
-
-run_sim.tcl references files with ../ (one level up from sim_work/). Keep the folder layout.
-
-✅ Current Status
-Core datapath + control: Working (subset RV32I as listed)
-
-LSU MMIO: Working for LEDs/HEX/LCD + Switch read
-
-IMEM/DataMem: Working via $readmemh
-
-🛠️ Roadmap
-Add LB/LH/LBU/LHU/SB/SH
-
-Basic exception / unaligned access handling
-
-Optional 2–5 stage pipeline (higher Fmax)
-
-Expose WB-trace ports from top for perfect commit logging in TB
+# ================================================================
+# NOTES:
+# - TO ADD A FILE: append its name in FILES above. Example:
+#     set FILES { riscv_top.v regfile.v mem.v alu.v my_new_module.v tb_regtrace.v }
+# - TO USE AN ABSOLUTE SOURCE PATH: set SRC_DIR "I:/path/to/your/sources"
+# - TO CHANGE TESTBENCH: set TOP <your_tb_module_name>
+# - If Vivado cannot find files: verify SRC_DIR and FILES
+# - If INSTR shows xxxxxxxx in the log: check $readmemh("mem.h", mem) and the mem.h location
+# ================================================================
