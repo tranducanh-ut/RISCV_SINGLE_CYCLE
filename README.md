@@ -126,41 +126,85 @@ For FPGA, map top-level I/O to your board (LEDs, HEX, switches, LCD).
 
 ## 🧪 Tutorial: Run the Testbench in `testAPP`
 
+Run the RISC-V testbench (`tb_regtrace.v`) with **Vivado XSim** in batch mode and generate **`regtrace.txt`** (register update trace) next to your sources.
+
+---
+
+### ✅ Prerequisites
+- **Vivado 2024.x (XSim)** installed on Windows
+- Your RTL & TB files placed under `testAPP/` (see layout below)
+
+```text
+testAPP/
+├─ alu.v
+├─ brc.v
+├─ controller.v
+├─ ImmGen.v
+├─ lsu.v
+├─ mem.v                 # uses $readmemh("mem.h", mem);
+├─ regfile.v
+├─ riscv_top.v
+├─ tb_regtrace.v         # writes ../regtrace.txt (so output is testAPP/regtrace.txt)
+├─ mem.h                 # your program hex for $readmemh
+├─ run_sim.tcl           # TCL script (below)
+└─ sim_work/             # build folder created by you (recommended)
+Important: In mem.v, make sure you load hex from the same folder:
+
+verilog
+Copy code
+initial begin
+  $readmemh("mem.h", mem);
+end
+🚀 Quick Start
+Create the working directory:
+
+bat
+Copy code
+mkdir testAPP\sim_work
+Place the TCL script below as testAPP\run_sim.tcl.
+
+Run from sim_work:
+
+bat
+Copy code
+cd testAPP\sim_work
+vivado -mode batch -source ..\run_sim.tcl
+Open the output:
+
+Trace file → testAPP\regtrace.txt
+
+🧩 run_sim.tcl (drop-in & ready)
+tcl
+Copy code
 # ================================================================
-# run_sim.tcl — TCL to run XSim (Vivado) with inline instructions
+# run_sim.tcl — Run XSim (Vivado) with inline instructions
 # ================================================================
 # USAGE (Windows):
-#   1) Open CMD in the folder that contains "sim_work\" (or use Vivado Tcl Console)
-#   2) Run:  vivado -mode batch -source run_sim.tcl
+#   1) Open CMD in testAPP\sim_work  (or use Vivado Tcl Console)
+#   2) Run:  vivado -mode batch -source ..\run_sim.tcl
 #
 # GOAL:
 #   - Point to the RTL/testbench directory (SRC_DIR)
-#   - List the .v files you want to compile (FILES)
+#   - List .v files to compile (FILES)
 #   - Compile (xvlog) → Elaborate (xelab) → Run (xsim)
-#   - Testbench writes its log to ../regtrace.txt (if TB opens "../regtrace.txt")
-#
-# QUICK CUSTOMIZATION:
-#   - Switch SRC_DIR to an ABSOLUTE path:  set SRC_DIR "I:/testAPP"
-#   - Add/remove .v files in FILES
-#   - Change TOP (testbench module name): set TOP tb_regtrace
+#   - Testbench writes ../regtrace.txt (so output is testAPP\regtrace.txt)
 # ================================================================
 
-# --------- 1) CONFIGURE SOURCE DIRECTORY & BUILD TARGET ---------
-
+# -------- 1) CONFIGURE SOURCE DIRECTORY & TOP --------
 # Directory of this script (run_sim.tcl)
 set SCRIPT_DIR [file normalize [file dirname [info script]]]
 
-# DEFAULT: source RTL lives one level above this script (../)
-# => If run_sim.tcl is in "testAPP/sim_work", then SRC_DIR = "testAPP"
+# Sources live one level above sim_work
+# If run_sim.tcl is in "testAPP/sim_work", SRC_DIR = "testAPP"
 set SRC_DIR [file normalize [file join $SCRIPT_DIR ..]]
 
-# ALTERNATIVE: use an ABSOLUTE PATH (RECOMMENDED for clarity/stability)
+# Alternative (absolute path) — uncomment & edit if preferred:
 # set SRC_DIR "I:/testAPP"
 
-# Testbench top module name
+# Testbench top module
 set TOP tb_regtrace
 
-# List of .v files to compile (ADD/REMOVE HERE)
+# RTL/TB file list (add/remove as needed)
 set FILES {
   riscv_top.v
   regfile.v
@@ -173,14 +217,13 @@ set FILES {
   tb_regtrace.v
 }
 
-# --------- 2) MAKE ABSOLUTE PATHS & VERIFY EXISTENCE ---------
-
+# -------- 2) RESOLVE ABSOLUTE PATHS & CHECK FILES --------
 set ABS_FILES {}
 foreach f $FILES {
   set absf [file normalize [file join $SRC_DIR $f]]
   if {![file exists $absf]} {
     puts "ERROR: File not found: $absf"
-    puts "Please verify SRC_DIR or filenames in FILES."
+    puts "Fix SRC_DIR or FILES list above."
     exit 1
   }
   lappend ABS_FILES $absf
@@ -191,42 +234,25 @@ puts "===> TOP     = $TOP"
 puts "===> FILES:"
 foreach f $ABS_FILES { puts "     - $f" }
 
-# --------- 3) CLEAN PREVIOUS RUN ARTIFACTS ---------
-
+# -------- 3) CLEAN PREVIOUS ARTIFACTS --------
 file delete -force xsim.dir .Xil
 
-# --------- 4) COMPILE (xvlog) ---------
-
+# -------- 4) COMPILE (xvlog) --------
 puts ">> xvlog ..."
-# --incr: incremental compile; --relax: relax some constraints
-# Use {*}$ABS_FILES to splat the list into arguments
 exec xvlog --incr --relax {*}$ABS_FILES
 
-# --------- 5) ELABORATE (xelab) ---------
-
+# -------- 5) ELABORATE (xelab) --------
 puts ">> xelab ..."
-# Snapshot name is TOP + "_sim"
 set SNAP "${TOP}_sim"
 exec xelab $TOP -s $SNAP
 
-# --------- 6) RUN SIMULATION (xsim) ---------
-
+# -------- 6) RUN (xsim) --------
 puts ">> xsim -R ..."
 exec xsim $SNAP -R
-
 puts "Simulation DONE."
 
-# --------- 7) NOTE ABOUT LOG LOCATION (IF NEEDED) ---------
-# If the testbench opens "../regtrace.txt" (from sim_work), the log will be here:
+# -------- 7) WHERE IS THE LOG? --------
+# If TB opens '../regtrace.txt' from sim_work, it will be:
 set EXPECT_LOG [file normalize [file join $SRC_DIR regtrace.txt]]
-puts "If TB uses ../regtrace.txt, expected log file: $EXPECT_LOG"
-
-# ================================================================
-# NOTES:
-# - TO ADD A FILE: append its name in FILES above. Example:
-#     set FILES { riscv_top.v regfile.v mem.v alu.v my_new_module.v tb_regtrace.v }
-# - TO USE AN ABSOLUTE SOURCE PATH: set SRC_DIR "I:/path/to/your/sources"
-# - TO CHANGE TESTBENCH: set TOP <your_tb_module_name>
-# - If Vivado cannot find files: verify SRC_DIR and FILES
-# - If INSTR shows xxxxxxxx in the log: check $readmemh("mem.h", mem) and the mem.h location
+puts "Expected log file: $EXPECT_LOG"
 # ================================================================
