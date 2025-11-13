@@ -3,12 +3,12 @@
 # SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
 # IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
 # SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
-# Start of session at: Wed Nov 12 23:46:47 2025
-# Process ID         : 19504
-# Current directory  : I:/testAPP/sim_work
+# Start of session at: Thu Nov 13 21:02:56 2025
+# Process ID         : 16848
+# Current directory  : I:/SINGLE_CYCLE_RISC_V/testAPP/sim_work
 # Command line       : xsim.exe -mode tcl -source {xsim.dir/tb_regtrace_sim/xsim_script.tcl}
-# Log file           : I:/testAPP/sim_work/xsim.log
-# Journal file       : I:/testAPP/sim_work\xsim.jou
+# Log file           : I:/SINGLE_CYCLE_RISC_V/testAPP/sim_work/xsim.log
+# Journal file       : I:/SINGLE_CYCLE_RISC_V/testAPP/sim_work\xsim.jou
 # Running On         : DESKTOP-M79FMGV
 # Platform           : Windows Server 2016 or Windows 10
 # Operating System   : 19045
@@ -17,9 +17,9 @@
 # CPU Physical cores : 4
 # CPU Logical cores  : 8
 # Host memory        : 21344 MB
-# Swap memory        : 5637 MB
-# Total Virtual      : 26981 MB
-# Available Virtual  : 11163 MB
+# Swap memory        : 5368 MB
+# Total Virtual      : 26713 MB
+# Available Virtual  : 15812 MB
 #-----------------------------------------------------------
 source xsim.dir/tb_regtrace_sim/xsim_script.tcl
 # xsim {tb_regtrace_sim} -testplusarg LOGFILE=regtrace.txt -autoloadwcfg -runall
@@ -222,6 +222,6 @@ t=1955000 PC=0000009c INSTR=02041663 pc_sel=0 alu_out=00000000
 t=1965000 PC=000000a0 INSTR=004fff93 pc_sel=0 alu_out=00000000
 t=1975000 PC=000000a4 INSTR=020f8263 pc_sel=1 alu_out=00000000
 t=1985000 PC=00000000 INSTR=00000000 pc_sel=0 alu_out=00000000
-$finish called at time : 1995 ns : File "I:/testAPP/tb_regtrace.v" Line 247
+$finish called at time : 1995 ns : File "I:/SINGLE_CYCLE_RISC_V/testAPP/tb_regtrace.v" Line 152
 exit
-INFO: [Common 17-206] Exiting xsim at Wed Nov 12 23:46:50 2025...
+INFO: [Common 17-206] Exiting xsim at Thu Nov 13 21:02:59 2025...

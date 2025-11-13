@@ -70,15 +70,16 @@ module tb_regtrace;
       $display("ERROR: cannot open reg_update_log.txt");
       $finish;
     end
-    $fdisplay(fd, "##   ##  ######  ##   ##  ##   ##  #######");
-    $fdisplay(fd, "##   ##  ##      ### ###  ##   ##    ##   ");
-    $fdisplay(fd, "#######  ##      #######  ##   ##    ##   ");
-    $fdisplay(fd, "##   ##  ##      ## # ##  ##   ##    ##   ");
-    $fdisplay(fd, "##   ##  ######  ##   ##   #####     ##   ");
+    $fdisplay(fd, "              ##   ##  ######  ##   ##  ##   ##  #######");
+    $fdisplay(fd, "              ##   ##  ##      ### ###  ##   ##    ##   ");
+    $fdisplay(fd, "              #######  ##      #######  ##   ##    ##   ");
+    $fdisplay(fd, "              ##   ##  ##      ## # ##  ##   ##    ##   ");
+    $fdisplay(fd, "              ##   ##  ######  ##   ##   #####     ##   ");
     $fdisplay(fd, "");
-    $fdisplay(fd, "author: 2352065-Tranducanh");
-    $fdisplay(fd, "==== RISC-V Register Update Trace ====");
-    $fdisplay(fd, "               Time(ns) | PC         INSTR      | Updates");
+    $fdisplay(fd, "github: tranducanh-ut");
+    $fdisplay(fd, "                ==== RISC-V Register Update Trace ====");
+    $fdisplay(fd, "");
+    $fdisplay(fd, "            Time(ns) | PC         INSTR   | Updates");
     $fdisplay(fd, "---------------------------------------------------------------");
   end
 
@@ -145,7 +146,7 @@ module tb_regtrace;
     // cycle counting
     cycle_cnt = cycle_cnt + 1;
     if (cycle_cnt >= MAX_CYCLES) begin
-      $fdisplay(fd, "==== END ====");
+      $fdisplay(fd, "              ==========END==========");
       $fflush(fd);
       $fclose(fd);
       $finish;

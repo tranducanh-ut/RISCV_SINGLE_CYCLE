@@ -1,7 +1,7 @@
-Running: xsim.dir/tb_regtrace_sim/xsimk.exe -runall -simmode gui -testplusarg LOGFILE=regtrace.txt -wdb tb_regtrace_sim.wdb -simrunnum 0 -socket 64708
+Running: xsim.dir/tb_regtrace_sim/xsimk.exe -runall -simmode gui -testplusarg LOGFILE=regtrace.txt -wdb tb_regtrace_sim.wdb -simrunnum 0 -socket 59758
 Design successfully loaded
-Design Loading Memory Usage: 26264 KB (Peak: 26264 KB)
-Design Loading CPU Usage: 874 ms
+Design Loading Memory Usage: 26316 KB (Peak: 26316 KB)
+Design Loading CPU Usage: 905 ms
 Simulation completed
-Simulation Memory Usage: 26952 KB (Peak: 26952 KB)
-Simulation CPU Usage: 906 ms
+Simulation Memory Usage: 26956 KB (Peak: 26956 KB)
+Simulation CPU Usage: 905 ms
