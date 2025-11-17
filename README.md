@@ -214,3 +214,5 @@ set -euo pipefail
 mkdir -p sim_work
 cd sim_work
 vivado -mode batch -source ../run_sim.tcl
+### Demo tape-out
+<img width="1202" height="882" alt="image" src="https://github.com/user-attachments/assets/da349709-97af-49d8-8f05-d1b148b62225" />
